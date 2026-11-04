@@ -21,6 +21,26 @@ Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
 
 ---
 
+## 📸 Demostración en Hardware Real (HeadRush Gigboard)
+
+<p align="center">
+  <img src="docs/images/gigboard_hardware_rig.jpg" alt="HeadRush Gigboard ejecutando NAM Mod" width="800" />
+</p>
+
+<p align="center">
+  <img src="docs/images/gigboard_screen_chain.jpg" alt="Cadena de señal en pantalla táctil con doble bloque NAM (Pedal + Amp)" width="48%" />
+  <img src="docs/images/gigboard_preset_picker.jpg" alt="Navegador de presets y bloques de amplificador" width="48%" />
+</p>
+
+### 🎨 Gráficos Integrados en el Motor QML/RCC de HeadRush
+
+| Bloque Pedal: Anxiety OD (NAM) | Bloque Amplificador: 82 LEAD 800 (NAM) |
+| :---: | :---: |
+| <img src="docs/images/nam_a2_pedal.jpg" alt="Pedal NAM A2 Vertical" width="260" /> | <img src="docs/images/nam_a2_amp_head.jpg" alt="Cabezal NAM A2 Horizontal" width="500" /> |
+| *Diseño vertical para pedal de sobremarcha en la cadena* | *Cabezal apaisado con control de EQ activo de 3 bandas y Presence* |
+
+---
+
 ## ⚡ Características Principales
 
 - **Doble Bloque NAM en Cadena**:
