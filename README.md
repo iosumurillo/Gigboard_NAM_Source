@@ -7,21 +7,21 @@
 
 Modificación avanzada de firmware para **HeadRush Gigboard** (con compatibilidad para MX5 y Pedalboard) con **Firmware 2.7**, que integra de forma nativa la inferencia de redes neuronales [Neural Amp Modeler (NAM)](https://github.com/sdatkinson/NeuralAmpModelerCore) directamente en el motor de audio en tiempo real (`/usr/Evil/Evil`).
 
-### 📥 Descargas Oficiales de Producción (Releases)
+### Descargas Oficiales de Producción (Releases)
 
 Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
 
 | Archivo | Descripción | Descarga Directa |
 | :--- | :--- | :--- |
-| **Firmware Updater (NAM A2 extended mod)** | Flasheador automático para HeadRush Gigboard con soporte Dual NAM + Amp + Tone Stack | [⬇️ Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush.gigboard.Firmware.Updater.NAM.A2.extended.mod.exe) |
-| **HeadRush NAM Block Manager** | Gestor de perfiles `.nam`, ordenación USB y generador de `.block` para Windows 10/11 | [⬇️ Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush_NAM_Block_Manager.exe) |
+| **Firmware Updater (NAM A2 extended mod)** | Flasheador automático para HeadRush Gigboard con soporte Dual NAM + Amp + Tone Stack | [Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush.gigboard.Firmware.Updater.NAM.A2.extended.mod.exe) |
+| **HeadRush NAM Block Manager** | Gestor de perfiles `.nam`, ordenación USB y generador de `.block` para Windows 10/11 | [Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush_NAM_Block_Manager.exe) |
 
-> 📦 **Página de la Release**: [v2.7 Extended Edition](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/tag/v2.7-nam-extended)  
-> 📖 **Guía técnica y manual de usuario detallado**: [GUIA_NAM_HEADRUSH.md](GUIA_NAM_HEADRUSH.md)
+> **Página de la Release**: [v2.7 Extended Edition](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/tag/v2.7-nam-extended)  
+> **Guía técnica y manual de usuario detallado**: [GUIA_NAM_HEADRUSH.md](GUIA_NAM_HEADRUSH.md)
 
 ---
 
-## 📸 Demostración en Hardware Real (HeadRush Gigboard)
+## Demostración en Hardware Real (HeadRush Gigboard)
 
 <p align="center">
   <img src="docs/images/gigboard_hardware_rig.jpg" alt="HeadRush Gigboard ejecutando NAM Mod" width="800" />
@@ -32,7 +32,7 @@ Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
   <img src="docs/images/gigboard_preset_picker.jpg" alt="Navegador de presets y bloques de amplificador" width="48%" />
 </p>
 
-### 🎨 Gráficos Integrados en el Motor QML/RCC de HeadRush
+### Gráficos Integrados en el Motor QML/RCC de HeadRush
 
 | Bloque Pedal: Anxiety OD (NAM) | Bloque Amplificador: 82 LEAD 800 (NAM) |
 | :---: | :---: |
@@ -41,7 +41,7 @@ Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
 
 ---
 
-## ⚡ Características Principales
+## Características Principales
 
 - **Doble Bloque NAM en Cadena**:
   - **Pedal Anxiety OD (NAM)** (y Anxiety OD V2): Inferencia transparente como pedal de saturación/overdrive con controles de Input Trim, Level y selector de modelo.
@@ -62,7 +62,7 @@ Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
 
 ---
 
-## 📁 Estructura del Repositorio
+## Estructura del Repositorio
 
 ```text
 Gigboard_NAM/
@@ -94,7 +94,7 @@ Gigboard_NAM/
 
 ---
 
-## 🎛️ Mapeo de Controles
+## Mapeo de Controles
 
 ### Bloque Pedal: Anxiety OD (NAM)
 
@@ -122,7 +122,7 @@ Gigboard_NAM/
 
 ---
 
-## 🚀 Inicio Rápido
+## Inicio Rápido
 
 ### 1. Cargar Modelos en el Pendrive USB
 1. Conecta tu HeadRush Gigboard a la computadora en modo **Transferencia de Archivos USB**.
@@ -138,7 +138,7 @@ Si deseas presets inmediatos, copia el contenido de `presets/Blocks_Para_Tu_Gigb
 
 ---
 
-## 🛠️ Compilación desde el Código Fuente
+## Compilación desde el Código Fuente
 
 ### Requisitos
 - **Windows**: MinGW-w64 con CMake, o WSL2 (Ubuntu 20.04/22.04).
@@ -157,7 +157,7 @@ cmake --build . --config Release
 
 ---
 
-## ⚠️ Recuperación y Seguridad
+## Recuperación y Seguridad
 
 El mod preserva la estructura de actualización oficial de HeadRush. Para restaurar el firmware original de fábrica en cualquier momento:
 1. Pon la Gigboard en modo actualización de firmware.
@@ -166,9 +166,8 @@ El mod preserva la estructura de actualización oficial de HeadRush. Para restau
 
 ---
 
-## ⚖️ Licencia
+## Licencia
 
 - El código del mod y los hooks de integración están bajo la licencia [GPL v3](LICENSE).
 - NeuralAmpModelerCore está bajo la licencia [MIT](https://github.com/sdatkinson/NeuralAmpModelerCore/blob/main/LICENSE).
 - Las marcas HeadRush, Gigboard, MX5 y Pedalboard son marcas registradas de inMusic Brands, Inc. Este proyecto es una modificación comunitaria independiente y de código abierto sin afiliación con inMusic Brands.
-
