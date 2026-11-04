@@ -3,10 +3,21 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Platform: HeadRush](https://img.shields.io/badge/Platform-Gigboard%20%7C%20MX5%20%7C%20Pedalboard-orange.svg)](#)
 [![NAM Core](https://img.shields.io/badge/Engine-Neural%20Amp%20Modeler-green.svg)](https://github.com/sdatkinson/NeuralAmpModelerCore)
+[![Release: v2.7 Extended](https://img.shields.io/badge/Release-v2.7%20Extended-success.svg)](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/tag/v2.7-nam-extended)
 
 Modificación avanzada de firmware para **HeadRush Gigboard** (con compatibilidad para MX5 y Pedalboard) con **Firmware 2.7**, que integra de forma nativa la inferencia de redes neuronales [Neural Amp Modeler (NAM)](https://github.com/sdatkinson/NeuralAmpModelerCore) directamente en el motor de audio en tiempo real (`/usr/Evil/Evil`).
 
-> 📖 **Para la guía técnica y manual de uso detallado**, consulta [GUIA_NAM_HEADRUSH.md](GUIA_NAM_HEADRUSH.md).
+### 📥 Descargas Oficiales de Producción (Releases)
+
+Para instalar el mod en tu pedalera sin necesidad de compilar código fuente:
+
+| Archivo | Descripción | Descarga Directa |
+| :--- | :--- | :--- |
+| **Firmware Updater (NAM A2 extended mod)** | Flasheador automático para HeadRush Gigboard con soporte Dual NAM + Amp + Tone Stack | [⬇️ Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush.gigboard.Firmware.Updater.NAM.A2.extended.mod.exe) |
+| **HeadRush NAM Block Manager** | Gestor de perfiles `.nam`, ordenación USB y generador de `.block` para Windows 10/11 | [⬇️ Descargar .exe](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/download/v2.7-nam-extended/HeadRush_NAM_Block_Manager.exe) |
+
+> 📦 **Página de la Release**: [v2.7 Extended Edition](https://github.com/iosumurillo/GIGBOARD_NAM_AMP_PNG/releases/tag/v2.7-nam-extended)  
+> 📖 **Guía técnica y manual de usuario detallado**: [GUIA_NAM_HEADRUSH.md](GUIA_NAM_HEADRUSH.md)
 
 ---
 
