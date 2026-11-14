@@ -202,6 +202,47 @@ class HeadRushBlockManager(tk.Tk):
                                   padx=20, pady=8, cursor="hand2")
         self.sync_btn.pack(side="right")
 
+    def _write_mesa_tc_blocks(self, amp_dest: Path):
+        tc_channels = [
+            ("MESA TC-100 CH1 CLEAN.block",   55, False, 45, 60, 50, 55, 60, 11),
+            ("MESA TC-100 CH2 LO-GAIN.block", 52, False, 60, 55, 58, 55, 58, 12),
+            ("MESA TC-100 CH3 HI-GAIN.block", 48, True,  68, 52, 54, 58, 60, 13),
+        ]
+        for fname, bass, bright, gain, master, mid, pres, treble, td in tc_channels:
+            out_path = amp_dest / fname
+            if out_path.exists():
+                continue
+            payload = {
+                "data": {
+                    "Amp": {
+                        "childorder": [
+                            "TremSync", "DoubleStates", "Type", "Bright", "Treble",
+                            "Mid", "MidFreq", "Bass", "Presence", "GainA", "GainB",
+                            "TremSpeed", "TremDepth", "Master", "Tremolo",
+                        ],
+                        "children": {
+                            "Bass": {"type": 0, "value": bass},
+                            "Bright": {"state": bright, "type": 1},
+                            "DoubleStates": {"state": False, "type": 3},
+                            "GainA": {"type": 0, "value": gain},
+                            "GainB": {"type": 0, "value": gain},
+                            "Master": {"type": 0, "value": master},
+                            "Mid": {"type": 0, "value": mid},
+                            "MidFreq": {"type": 0, "value": 776},
+                            "Presence": {"type": 0, "value": pres},
+                            "Treble": {"type": 0, "value": treble},
+                            "TremDepth": {"type": 0, "value": td},
+                            "TremSpeed": {"type": 0, "value": 2},
+                            "TremSync": {"state": False, "type": 1},
+                            "Tremolo": {"state": False, "type": 1},
+                            "Type": {"string": "85 M-2 Lead", "type": 4},
+                        },
+                    }
+                },
+                "info": {"version": "1.0.9"},
+            }
+            out_path.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
+
     def get_available_drives(self):
         drives = []
         bitmask = 0
@@ -417,13 +458,20 @@ class HeadRushBlockManager(tk.Tk):
                                 pass
                         backup_created = True
 
-                # Clean old presets if requested
+                # Clean old presets if requested (preserve custom MESA TC-100 blocks)
                 if self.opt_clean_old.get() and dest.exists():
                     for old_b in dest.glob("*.block"):
+                        if old_b.name.startswith("MESA TC-100 "):
+                            continue
                         try:
                             old_b.unlink()
                         except Exception:
                             pass
+
+                # Ensure additive Mesa Triple Crown (TC-100) blocks exist in Blocks/AMP
+                amp_dest = dest.parent / "AMP"
+                amp_dest.mkdir(parents=True, exist_ok=True)
+                self._write_mesa_tc_blocks(amp_dest)
 
                 # Generate new blocks
                 for idx, fpath in enumerate(self.detected_models):

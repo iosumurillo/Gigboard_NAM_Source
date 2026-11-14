@@ -1,9 +1,14 @@
 /* patch_pipeline.c -- see patch_pipeline.h. */
 #include "patch_pipeline.h"
+#include "global_settings_patch.h"
 
 #include "active_stomp_patch.h"
 #include "anxiety_od_png_patch.h"
 #include "user_art_patch.h"
+#include "mesa_tc_png_patch.h"
+#include "user_amps_png_patch.h"
+#include "triple_crown_patch.h"
+#include "dev_ui_cpu_patch.h"
 #include "elf_patch.h"
 #include "ext4_image.h"
 #include "fit_image.h"
@@ -342,10 +347,151 @@ bool nam_patch_pipeline(const uint8_t* stock_img_data, size_t stock_img_len, con
         memcpy(evil_data + AMP_A_OFF, AMP_A_PNG, AMP_A_LEN);
         report(progress, progress_user_data, "OK  82 LEAD 800 Bright Amp PNG #1 replaced with custom artwork @ 0x%x", AMP_A_OFF);
       }
-      if (AMP_B_OFF + AMP_B_LEN <= evil_len && memcmp(evil_data + AMP_B_OFF, AMP_B_NEEDLE, sizeof(AMP_B_NEEDLE)) == 0)
+      if (AMP_B_OFF + MESA_TC_PNG_LEN <= evil_len &&
+          memcmp(evil_data + AMP_B_OFF, AMP_B_NEEDLE, sizeof(AMP_B_NEEDLE)) == 0)
       {
-        memcpy(evil_data + AMP_B_OFF, AMP_B_PNG, AMP_B_LEN);
-        report(progress, progress_user_data, "OK  82 LEAD 800 Bright Amp PNG #2 replaced with custom artwork @ 0x%x", AMP_B_OFF);
+        memcpy(evil_data + AMP_B_OFF, MESA_TC_PNG, MESA_TC_PNG_LEN);
+        report(progress, progress_user_data,
+               "OK  Mesa Triple Crown artwork PNG replaced @ 0x%x", AMP_B_OFF);
+      }
+      for (size_t i = 0; i < USER_AMP_PNG_COUNT; ++i)
+      {
+        const UserAmpPngPatch* p = &USER_AMP_PNG_PATCHES[i];
+        if (p->offset + p->len <= evil_len &&
+            memcmp(evil_data + p->offset, p->needle, 16) == 0)
+        {
+          memcpy(evil_data + p->offset, p->data, p->len);
+          report(progress, progress_user_data,
+                 "OK  %s artwork PNG replaced @ 0x%x", p->name, p->offset);
+        }
+      }
+
+      /* Add Mesa Triple Crown as true 54th Amp (index 53 / 0x35) */
+      size_t tc_word_ok = 0;
+      if (TC_AMP_LIST_OFF + TC_AMP_LIST_LEN <= evil_len &&
+          memcmp(evil_data + TC_AMP_LIST_OFF, TC_AMP_LIST_NEEDLE, sizeof(TC_AMP_LIST_NEEDLE)) == 0)
+      {
+        memcpy(evil_data + TC_AMP_LIST_OFF, TC_AMP_LIST_CODE, TC_AMP_LIST_LEN);
+        report(progress, progress_user_data,
+               "OK  BuildAmpNameList expanded to 54 amps (index 53: Mesa Triple Crown) @ 0x%x",
+               TC_AMP_LIST_OFF);
+      }
+      for (size_t i = 0; i < TC_WORD_PATCH_COUNT; ++i)
+      {
+        const TcWordPatch* tp = &TC_WORD_PATCHES[i];
+        if (tp->offset + 4U <= evil_len)
+        {
+          uint8_t* p = evil_data + tp->offset;
+          uint32_t cur = (uint32_t)p[0] | ((uint32_t)p[1] << 8) |
+                         ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+          if (cur == tp->orig_word)
+          {
+            p[0] = (uint8_t)(tp->new_word & 0xffU);
+            p[1] = (uint8_t)((tp->new_word >> 8) & 0xffU);
+            p[2] = (uint8_t)((tp->new_word >> 16) & 0xffU);
+            p[3] = (uint8_t)((tp->new_word >> 24) & 0xffU);
+            tc_word_ok++;
+          }
+        }
+      }
+      if (tc_word_ok > 0)
+      {
+        report(progress, progress_user_data,
+               "OK  Mesa Triple Crown DSP/UI table patches applied (%zu/%u)",
+               tc_word_ok, (unsigned)TC_WORD_PATCH_COUNT);
+      }
+    }
+
+    /* Unlock the 3 hidden engineering screens (Setup.qml dev menu / ampTweak / fftDisplay) */
+    {
+      static const uint8_t kDevAccessNeedle[20] = {
+          0x70, 0x1f, 0x0a, 0xe3, 0x57, 0x11, 0x40, 0xe3,
+          0x04, 0x00, 0xa0, 0xe1, 0x3d, 0x4b, 0x00, 0xeb,
+          0x00, 0x10, 0xa0, 0xe3
+      };
+      static const uint8_t kGsQv4PathNeedle[50] = {
+          0x2f, 0x00, 0x50, 0x00, 0x61, 0x00, 0x67, 0x00, 0x65, 0x00, 0x73, 0x00,
+          0x2f, 0x00, 0x47, 0x00, 0x6c, 0x00, 0x6f, 0x00, 0x62, 0x00, 0x61, 0x00,
+          0x6c, 0x00, 0x53, 0x00, 0x65, 0x00, 0x74, 0x00, 0x74, 0x00, 0x69, 0x00,
+          0x6e, 0x00, 0x67, 0x00, 0x73, 0x00, 0x2e, 0x00, 0x71, 0x00, 0x6d, 0x00,
+          0x6c, 0x00
+      };
+      static const uint8_t kGsQv4HdrNeedle[28] = {
+          0x71, 0x76, 0x34, 0x63, 0x64, 0x61, 0x74, 0x61,
+          0x29, 0x00, 0x00, 0x00, 0x02, 0x0f, 0x05, 0x00,
+          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+          0x84, 0x07, 0x00, 0x00
+      };
+      if (0x55d1acU + sizeof(kDevAccessNeedle) <= evil_len &&
+          memcmp(evil_data + 0x55d1acU, kDevAccessNeedle, sizeof(kDevAccessNeedle)) == 0)
+      {
+        evil_data[0x55d1acU + 16U] = 0x01;
+        report(progress, progress_user_data, "OK  RedirCtrl EnableDevAccess default ON @ 0x55d1ac");
+      }
+      if (GLOBAL_SETTINGS_OFF + GLOBAL_SETTINGS_TOTAL_LEN <= evil_len &&
+          memcmp(evil_data + GLOBAL_SETTINGS_OFF, GLOBAL_SETTINGS_NEEDLE, sizeof(GLOBAL_SETTINGS_NEEDLE)) == 0)
+      {
+        memcpy(evil_data + GLOBAL_SETTINGS_OFF, GLOBAL_SETTINGS_PATCH, GLOBAL_SETTINGS_TOTAL_LEN);
+        report(progress, progress_user_data, "OK  GlobalSettings.qml patched (3 hidden dev screens unlocked) @ 0x%x",
+               GLOBAL_SETTINGS_OFF);
+      }
+      if (0x2d0f5e0U + sizeof(kGsQv4PathNeedle) <= evil_len &&
+          memcmp(evil_data + 0x2d0f5e0U, kGsQv4PathNeedle, sizeof(kGsQv4PathNeedle)) == 0)
+      {
+        evil_data[0x2d0f5e0U + 14U] = 'X';
+        report(progress, progress_user_data, "OK  GlobalSettings.qml QV4 path invalidated @ 0x2d0f5e0");
+      }
+      if (0x2d0c570U + sizeof(kGsQv4HdrNeedle) <= evil_len &&
+          memcmp(evil_data + 0x2d0c570U, kGsQv4HdrNeedle, sizeof(kGsQv4HdrNeedle)) == 0)
+      {
+        evil_data[0x2d0c570U + 3U] = 'x';
+        report(progress, progress_user_data, "OK  GlobalSettings.qml qv4cdata header invalidated @ 0x2d0c570");
+      }
+    }
+
+    /* Always show DSP CPU usage overlay + make Dev Mode screens touch-interactive */
+    if (SHOW_CPU_TIME_OFF + sizeof(SHOW_CPU_TIME_ORIG) <= evil_len &&
+        memcmp(evil_data + SHOW_CPU_TIME_OFF, SHOW_CPU_TIME_ORIG, sizeof(SHOW_CPU_TIME_ORIG)) == 0)
+    {
+      memcpy(evil_data + SHOW_CPU_TIME_OFF, SHOW_CPU_TIME_PATCH, sizeof(SHOW_CPU_TIME_PATCH));
+      report(progress, progress_user_data,
+             "OK  ShowCPUTime enabled by default at boot @ 0x%x", SHOW_CPU_TIME_OFF);
+    }
+    {
+      typedef struct {
+        uint32_t offset;
+        size_t len;
+        const uint8_t* needle;
+        size_t needle_len;
+        const uint8_t* patch;
+        const char* label;
+      } QmlBlobPatch;
+      static const QmlBlobPatch kDevCpuQmls[] = {
+          { ENGINE_INFO_QML_OFF, ENGINE_INFO_QML_LEN, ENGINE_INFO_QML_NEEDLE, sizeof(ENGINE_INFO_QML_NEEDLE), ENGINE_INFO_QML_PATCH, "EngineInfo.qml (CPU meter overlay)" },
+          { BLOCK_DETAILS_QML_OFF, BLOCK_DETAILS_QML_LEN, BLOCK_DETAILS_QML_NEEDLE, sizeof(BLOCK_DETAILS_QML_NEEDLE), BLOCK_DETAILS_QML_PATCH, "BlockDetails.qml (Triple Crown preview)" },
+          { DEV_COMBO_QML_OFF, DEV_COMBO_QML_LEN, DEV_COMBO_QML_NEEDLE, sizeof(DEV_COMBO_QML_NEEDLE), DEV_COMBO_QML_PATCH, "DevComboWithText.qml (touchscreen)" },
+          { NOTIFY_KNOB_QML_OFF, NOTIFY_KNOB_QML_LEN, NOTIFY_KNOB_QML_NEEDLE, sizeof(NOTIFY_KNOB_QML_NEEDLE), NOTIFY_KNOB_QML_PATCH, "NotifyKnobWithTexts.qml (touchscreen)" },
+          { NOTIFY_BTN_QML_OFF, NOTIFY_BTN_QML_LEN, NOTIFY_BTN_QML_NEEDLE, sizeof(NOTIFY_BTN_QML_NEEDLE), NOTIFY_BTN_QML_PATCH, "NotifyButtonWithText.qml (touchscreen)" },
+      };
+      for (size_t i = 0; i < sizeof(kDevCpuQmls) / sizeof(kDevCpuQmls[0]); ++i)
+      {
+        const QmlBlobPatch* q = &kDevCpuQmls[i];
+        if (q->offset + q->len <= evil_len &&
+            memcmp(evil_data + q->offset, q->needle, q->needle_len) == 0)
+        {
+          memcpy(evil_data + q->offset, q->patch, q->len);
+          report(progress, progress_user_data, "OK  %s @ 0x%x", q->label, q->offset);
+        }
+      }
+      for (size_t i = 0; i < DEV_QV4_PATCH_COUNT; ++i)
+      {
+        const DevQv4Patch* qv4 = &DEV_QV4_PATCHES[i];
+        if (qv4->offset + qv4->needle_len <= evil_len &&
+            memcmp(evil_data + qv4->offset, qv4->needle, qv4->needle_len) == 0)
+        {
+          evil_data[qv4->offset + qv4->x_rel] = 'X';
+          report(progress, progress_user_data, "OK  %s QV4 cache invalidated @ 0x%x", qv4->name, qv4->offset);
+        }
       }
     }
   }

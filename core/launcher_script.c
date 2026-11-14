@@ -34,7 +34,17 @@ static const char* const MOD_TAIL =
   "# writes to a hardcoded absolute vaddr valid only inside Evil's own\n"
   "# non-PIE layout; inside systemd-inhibit's unrelated address space that\n"
   "# write hits unmapped memory and segfaults it before it ever forks Evil\n"
-  "# -- an infinite crash loop, stuck on the splash screen forever.\n";
+  "# -- an infinite crash loop, stuck on the splash screen forever.\n"
+  "if [ -d /media/az01-internal/Evil/usb_mnt ]; then\n"
+  "  _tc_dir=\"/media/az01-internal/Evil/usb_mnt/Blocks/AMP\"\n"
+  "  mkdir -p \"$_tc_dir\"\n"
+  "  _write_tc() {\n"
+  "    [ -f \"$_tc_dir/$1\" ] || printf '{\"data\":{\"Amp\":{\"childorder\":[\"TremSync\",\"DoubleStates\",\"Type\",\"Bright\",\"Treble\",\"Mid\",\"MidFreq\",\"Bass\",\"Presence\",\"GainA\",\"GainB\",\"TremSpeed\",\"TremDepth\",\"Master\",\"Tremolo\"],\"children\":{\"Bass\":{\"type\":0,\"value\":%s},\"Bright\":{\"state\":%s,\"type\":1},\"DoubleStates\":{\"state\":false,\"type\":3},\"GainA\":{\"type\":0,\"value\":%s},\"GainB\":{\"type\":0,\"value\":%s},\"Master\":{\"type\":0,\"value\":%s},\"Mid\":{\"type\":0,\"value\":%s},\"MidFreq\":{\"type\":0,\"value\":776},\"Presence\":{\"type\":0,\"value\":%s},\"Treble\":{\"type\":0,\"value\":%s},\"TremDepth\":{\"type\":0,\"value\":%s},\"TremSpeed\":{\"type\":0,\"value\":2},\"TremSync\":{\"state\":false,\"type\":1},\"Tremolo\":{\"state\":false,\"type\":1},\"Type\":{\"string\":\"85 M-2 Lead\",\"type\":4}}}},\"info\":{\"version\":\"1.0.9\"}}\\n' \"$2\" \"$3\" \"$4\" \"$4\" \"$5\" \"$6\" \"$7\" \"$8\" \"$9\" > \"$_tc_dir/$1\"\n"
+  "  }\n"
+  "  _write_tc \"MESA TC-100 CH1 CLEAN.block\" 55 false 45 60 50 55 60 11\n"
+  "  _write_tc \"MESA TC-100 CH2 LO-GAIN.block\" 52 false 60 55 58 55 58 12\n"
+  "  _write_tc \"MESA TC-100 CH3 HI-GAIN.block\" 48 true 68 52 54 58 60 13\n"
+  "fi\n";
 
 #define OLD_EXEC "systemd-inhibit --what=handle-power-key /usr/Evil/Evil"
 
